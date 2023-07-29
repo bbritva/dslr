@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import sys
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -80,20 +80,24 @@ def calc_values(data, feature):
     ])
 
 
-def main():
-    data_train = read_data("dataset_train.csv")
-    data_test = read_data("dataset_test.csv")
-    if data_test is None or data_train is None:
+def main(filename):
+    # data_train = read_data("dataset_train.csv")
+    # data_test = read_data("dataset_test.csv")
+    data = read_data(filename)
+    if data is None:
         print("File reading error!")
         exit()
-    features = data_train.columns.values[6:]
+    features = data.columns.values[6:]
     rows = ['Count', 'Mean', 'Std', 'Min', '25%', '50%', '75%', 'Max']
     decription = pd.DataFrame(columns=features, index=rows)
     for feature in features:
-        decription[feature] = calc_values(data_train, feature)
-    # decription[features[0]] = calc_values(data_train, features[0])
+        decription[feature] = calc_values(data, feature)
     print(decription)
 
 
 if __name__ == '__main__':
-    main()
+    if not len(sys.argv) == 2:
+        print("Please, provide the filename in the program arguments")
+        exit()
+    filename = sys.argv[1]
+    main(filename)
