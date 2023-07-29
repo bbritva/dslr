@@ -12,9 +12,17 @@ def _guard_(func):
     return wrapper
 
 def _drop_nan_(func):
-    def wrapper(*args):
-        arr = args[0][~np.isnan(args[0])]
-        return (func(arr))
+    def wrapper(arr, *args, **kwargs):
+        arr = arr[~np.isnan(arr)]
+        return (func(arr, *args, **kwargs))
+    return wrapper
+
+
+def _to_numpy_(func):
+    def wrapper(arr, *args, **kwargs):
+        if not isinstance(arr, np.ndarray):
+            arr = arr.to_numpy()
+        return (func(arr, *args, **kwargs))
     return wrapper
 
 @_guard_
@@ -30,11 +38,14 @@ def read_data(filename):
     return data
 
 @_guard_
+@_to_numpy_
 @_drop_nan_
 def mean(arr):
     return sum(arr) / len(arr)
 
 @_guard_
+@_to_numpy_
+@_drop_nan_
 def percentile(x, p):
     x.sort()
     i = (len(x) - 1) * p / 100
@@ -45,21 +56,22 @@ def percentile(x, p):
     return res
 
 @_guard_
+@_to_numpy_
+@_drop_nan_
 def std(x):
     return (sum([(i - mean(x)) ** 2 for i in x]) / (len(x) - 1)) ** 0.5
 
 def calc_values(data, feature):
 
     return np.array([
-        len(data[feature].to_numpy()),
-        mean(data[feature].to_numpy()),
-        # std(data[feature]),
-        # min(data[feature]),
-        # percentile(data[feature], 25),
-        # percentile(data[feature], 50),
-        # percentile(data[feature], 75),
-        # max(data[feature]),
-        0,0,0,0,0,0
+        len(data[feature]),
+        mean(data[feature]),
+        std(data[feature]),
+        min(data[feature]),
+        percentile(data[feature], 25),
+        percentile(data[feature], 50),
+        percentile(data[feature], 75),
+        max(data[feature]),
         ])
 
 def main():
@@ -73,7 +85,7 @@ def main():
     rows = ['Count', 'Mean', 'Std', 'Min', '25%', '50%', '75%', 'Max']
     decription = pd.DataFrame(columns=features, index=rows)
     for feature in features:
-        decription[feature] = calc_values(data_train, feature)
+        decription[feature] = calc_values(data_test, feature)
     # decription[features[0]] = calc_values(data_train, features[0])
     print(decription)
 
