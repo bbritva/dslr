@@ -33,17 +33,20 @@ def read_data(filename):
     return data
 
 
-def histogram(data, features):
-    for i, feature in enumerate(features):
-        fig, axs = plt.subplots()
-        for key in houses:
+def scatter_plot(data, features):
+    for i in range(len(features) - 1):
+        for j in range(i + 1, len(features)):
+            plt.xlabel(features[i])
+            plt.ylabel(features[j])
+            for key in houses:
+                curr_data = data[data["Hogwarts House"] == key].dropna()
+                plt.scatter(curr_data[features[i]], curr_data[features[j]],
+                            marker='o', label="Origin", alpha=0.7, c=houses[key])
+            plt.grid()
+            plt.legend()
+            print(f"{i},{j}: {features[i]} vs {features[j]}")
+            plt.show()
 
-            axs.hist(data[data["Hogwarts House"] == key]
-                     [feature].dropna(), alpha=0.6, color=houses[key], label=key)
-        axs.legend()
-        axs.set_title(feature)
-        axs.grid()
-        plt.show()
 
 
 def main():
@@ -53,7 +56,7 @@ def main():
         print("File reading error!")
         exit()
     features = data_train.columns.values[6:]
-    histogram(data_train, features=features)
+    scatter_plot(data_train, features=features)
 
 
 if __name__ == '__main__':
