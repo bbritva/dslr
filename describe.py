@@ -98,7 +98,6 @@ def main(filename):
     for feature in features:
         for house in houses:
             houses_median[feature][house] = percentile(data[data["Hogwarts House"] == house][feature], 50)
-    # print(houses_median.loc["Ravenclaw"], decription.loc[['50%']])
     houses_median.loc["common"] = np.array(decription.loc[['50%']])
     print(houses_median)
     with open("medians.pickle", 'wb') as my_file:
