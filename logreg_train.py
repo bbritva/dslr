@@ -7,6 +7,12 @@ from my_logistic_regression import MyLogisticRegression as MyLR
 
 max_iter = 1e4
 alpha = 1e-2
+houses_index = {
+    "Ravenclaw": 0,
+    "Slytherin": 1,
+    "Gryffindor": 2,
+    "Hufflepuff": 3
+}
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -69,17 +75,11 @@ def fill_nan(X, features):
         medians = pickle.load(my_file)
         print(medians)
 
-        def get_median(x):
-            print(x, x.index, x.name)
-            if pd.isna(x):
-                return medians[x.name][X["Hogwarts House"][x.name]]
-            return x
+        for key in houses_index:
+            for feature in features:
+                X[(X["Hogwarts House"] == key) & pd.isna(X[feature])] = medians[feature][key]
         
-        def process_column(col, col_name):
-            print(col)
-        
-        X[features].apply(lambda col: process_column(col, col.name), axis=0)
-        return X
+        return np.array(X[features])
 
 
 def main(filename):
@@ -87,8 +87,7 @@ def main(filename):
     if data is None:
         print("File reading error!")
         exit()
-    data = data.dropna()
-    # X = fill_nan(data, features)
+    # data = data.dropna()
     features = data.columns.values[6:]
     houses = np.array(data["Hogwarts House"]).reshape((-1, 1))
     Y = np.zeros((houses.shape[0], 4), dtype='int8')
@@ -100,10 +99,13 @@ def main(filename):
     }
     for i, house in enumerate(houses):
         Y[i][houses_index[house[0]]] = 1
-    X = np.array(data[features].dropna())
+    X = fill_nan(data, features)
     print(X)
 
     models = train_models(X, Y)
+    with open("model.pickle", 'wb') as my_file:
+        pickle.dump(models, my_file)
+        print("All results are saved =)")
 
 
 

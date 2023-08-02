@@ -94,10 +94,12 @@ def main(filename):
     print(decription.loc[['50%']])
     houses = data["Hogwarts House"].unique()
     print("Median values for Hogwarts Houses")
-    houses_median = pd.DataFrame(columns=features, index=houses)
+    houses_median = pd.DataFrame(columns=features, index=np.r_[houses,["common"]])
     for feature in features:
         for house in houses:
             houses_median[feature][house] = percentile(data[data["Hogwarts House"] == house][feature], 50)
+    # print(houses_median.loc["Ravenclaw"], decription.loc[['50%']])
+    houses_median.loc["common"] = np.array(decription.loc[['50%']])
     print(houses_median)
     with open("medians.pickle", 'wb') as my_file:
         pickle.dump(houses_median, my_file)
