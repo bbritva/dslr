@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import sys
+import pickle
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -81,8 +82,6 @@ def calc_values(data, feature):
 
 
 def main(filename):
-    # data_train = read_data("dataset_train.csv")
-    # data_test = read_data("dataset_test.csv")
     data = read_data(filename)
     if data is None:
         print("File reading error!")
@@ -92,7 +91,19 @@ def main(filename):
     decription = pd.DataFrame(columns=features, index=rows)
     for feature in features:
         decription[feature] = calc_values(data, feature)
-    print(decription)
+    print(decription.loc[['50%']])
+    houses = data["Hogwarts House"].unique()
+    print("Median values for Hogwarts Houses")
+    houses_median = pd.DataFrame(columns=features, index=houses)
+    for feature in features:
+        for house in houses:
+            houses_median[feature][house] = percentile(data[data["Hogwarts House"] == house][feature], 50)
+    print(houses_median)
+    with open("medians.pickle", 'wb') as my_file:
+        pickle.dump(houses_median, my_file)
+        print("All results are saved =)")
+
+
 
 
 if __name__ == '__main__':

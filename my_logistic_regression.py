@@ -18,16 +18,12 @@ class MyLogisticRegression():
     Description:
     My personnal logistic regression to classify things.
     """
-    supported_penalities = ['l2']
-
     @_guard_
-    def __init__(self, theta, alpha=0.001, max_iter=1000, penalty='l2', lambda_=1.0):
+    def __init__(self, theta, alpha=0.001, max_iter=1000):
         self.alpha = alpha
         self.max_iter = int(max_iter)
         self.theta = np.array(theta)
         self.theta_ = np.zeros(theta.shape)
-        self.penalty = penalty
-        self.lambda_ = float(lambda_ if penalty in self.supported_penalities else 0)
 
         self.eps = np.full(self.theta.shape, math.e)
         self.x_ = np.ones(self.theta.shape)
@@ -37,20 +33,13 @@ class MyLogisticRegression():
         x_ = np.c_[np.ones((x.shape[0])), x]
         return 1 / (1 + math.e ** -(x_.dot(self.theta)))
 
-    @_guard_
+    # @_guard_
     def gradient(self, x, y):
         y_hat = 1 / (1 + self.eps ** -(self.x_.dot(self.theta)))
         return self.x_.T.dot(y_hat - y) / y.shape[0]
 
-    @_guard_
-    def reg_gradient(self, x, y):
-        self.theta_[1:] = self.theta[1:]
-        y_hat = 1 / (1 + self.eps ** -(self.x_.dot(self.theta)))
-        return (self.x_.T.dot(y_hat - y) + self.lambda_ * self.theta_) / y.shape[0]
-
-    @_guard_
+    # @_guard_
     def fit_(self, x, y):
-        grad_func = self.reg_gradient if self.penalty == 'l2' else self.gradient
         self.eps = np.full(y.shape, math.e)
         self.x_ = np.c_[np.ones(x.shape[0]), x]
         start = time.time()
@@ -58,7 +47,7 @@ class MyLogisticRegression():
         print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
         for j in range(20):
             for i in range(cycles):
-                self.theta -= self.alpha * grad_func(x, y)
+                self.theta -= self.alpha * self.gradient(x, y)
             now = time.time() - start
             print("\r%3d%%, time = %5.2fs" % ((j + 1) * 5, now), end="")
         print("")
