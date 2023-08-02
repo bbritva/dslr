@@ -42,7 +42,7 @@ def scatter_plot(data, features):
             for key in houses:
                 curr_data = data[data["Hogwarts House"] == key].dropna()
                 plt.scatter(curr_data[features[i]], curr_data[features[j]],
-                            marker='o', label="Origin", alpha=0.7, c=houses[key])
+                            marker='o', label=key, alpha=0.7, c=houses[key])
             plt.grid()
             plt.legend()
             print(f"{i},{j}: {features[i]} vs {features[j]}")
@@ -56,7 +56,7 @@ def main():
         print("File reading error!")
         exit()
     features = data_train.columns.values[6:]
-    scatter_plot(data_train, features=features)
+    scatter_plot(data_train, features=features[:3])
 
 
 if __name__ == '__main__':
