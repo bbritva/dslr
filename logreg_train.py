@@ -6,8 +6,8 @@ import pickle
 from my_logistic_regression import MyLogisticRegression as MyLR
 from data_preparator import DataPreparator as DP   
 
-max_iter = 1e4
-alpha = .2
+max_iter = 5e3
+alpha = 0.2
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -72,7 +72,6 @@ def main(filename):
     train_set, cv_set = data_preparator.split_data(np.c_[X, Y])
     print(train_set.shape, cv_set.shape)
     models = train_models(train_set[:, :-5], train_set[:, -5:-1])
-    print(models)
     validate_models(cv_set[:, :-5], cv_set[:, -1:], models)
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(models, my_file)
