@@ -69,7 +69,7 @@ def main(filename):
 
     result = pd.DataFrame(predictions).rename(columns={0:"Hogwarts House"}).applymap(lambda x: houses_index[x])
     print(result)
-    result.to_csv("res.csv", index_label='Index')
+    result.to_csv("houses.csv", index_label='Index')
 
 
 
