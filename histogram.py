@@ -52,7 +52,7 @@ def main():
     if data_test is None or data_train is None:
         print("File reading error!")
         exit()
-    features = data_train.columns.values[6:]
+    features = data_train.columns.values[5:]
     histogram(data_train, features=features)
 
 

@@ -5,8 +5,8 @@ import pickle
 
 from my_logistic_regression import MyLogisticRegression as MyLR
 
-max_iter = 1e5
-alpha = 1e-2
+max_iter = 5e5
+alpha = 1e-1
 houses_index = {
     "Ravenclaw": 0,
     "Slytherin": 1,
