@@ -1,6 +1,8 @@
 import numpy as np
 import time
 import math
+import matplotlib.pyplot as plt
+
 
 
 def _guard_(func):
@@ -8,7 +10,7 @@ def _guard_(func):
         try:
             return (func(*args, **kwargs))
         except Exception as e:
-            print(func.__name__ + ': ' + e)
+            print(func.__name__ + ': ', e)
             return None
     return wrapper
 
@@ -38,19 +40,29 @@ class MyLogisticRegression():
         y_hat = 1 / (1 + self.eps ** -(self.x_.dot(self.theta)))
         return self.x_.T.dot(y_hat - y) / y.shape[0]
 
-    # @_guard_
+    @_guard_
+    def show_loss(self, losses):
+        plt.scatter(np.arange(len(losses)), losses,
+                    marker='o', alpha=0.7)
+        plt.grid()
+        plt.show()
+    
+    @_guard_
     def fit_(self, x, y):
         self.eps = np.full(y.shape, math.e)
         self.x_ = np.c_[np.ones(x.shape[0]), x]
         start = time.time()
-        cycles = int(self.max_iter / 20)
+        cycles = int(self.max_iter / 100)
+        losses = [self.loss_(y, self.predict_(x))]
         print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
-        for j in range(20):
+        for j in range(100):
             for i in range(cycles):
                 self.theta -= self.alpha * self.gradient(x, y)
             now = time.time() - start
-            print("\r%3d%%, time = %5.2fs" % ((j + 1) * 5, now), end="")
+            print("\r%3d%%, time = %5.2fs" % ((j + 1), now), end="")
+            losses.append(self.loss_(y, self.predict_(x)))
         print("")
+        self.show_loss(losses)
         return self.theta
 
     @_guard_

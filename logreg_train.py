@@ -6,8 +6,8 @@ import pickle
 from my_logistic_regression import MyLogisticRegression as MyLR
 from data_preparator import DataPreparator as DP   
 
-max_iter = 1e5
-alpha = 100
+max_iter = 5e3
+alpha = .2
 
 def _guard_(func):
     def wrapper(*args, **kwargs):

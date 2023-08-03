@@ -30,6 +30,7 @@ class DataPreparator():
             'Ancient Runes',
             'History of Magic',
             'Transfiguration',
+            'Potions',
             'Charms',
             'Flying'
             ]
