@@ -64,6 +64,27 @@ def fill_nan(X, features):
 
 
 @_guard_
+def split_data(x):
+    np.random.shuffle(x)
+    limit_train = int(0.8 * x.shape[0])
+    return x[:limit_train,:], x[limit_train:,:]
+
+@_guard_
+def validate_models(X, Y, models):
+    thetas = models
+    y_hat = []
+    for theta in thetas:
+        mdl = MyLR(theta, alpha=alpha, max_iter=max_iter)
+        y_hat.append(mdl.predict_(X))
+    y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
+    y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
+
+    """ Output """
+    res = y_hat == Y
+    print("Correct predictions =", res.sum())
+    print("Wrong predictions =", res.shape[0] - res.sum())
+
+@_guard_
 def main(filename):
     data = read_data(filename)
     if data is None:
@@ -71,12 +92,19 @@ def main(filename):
         exit()
     features = data.columns.values[6:]
     houses = np.array(data["Hogwarts House"]).reshape((-1, 1))
-    Y = np.zeros((houses.shape[0], 4), dtype='int8')
+    Y = np.zeros((houses.shape[0], 5), dtype='int8')
     for i, house in enumerate(houses):
         Y[i][houses_index[house[0]]] = 1
+    
+    print(Y.shape, houses.shape)
+    coded_houses = np.array([houses_index[key] for key in houses.flatten()])
+    Y[:,4] = coded_houses
+    print(Y)
     X = fill_nan(data, features)
+    train_set, cv_set= split_data(np.c_[X, Y])
+    models = train_models(train_set[:, :-5], train_set[:, -5:-1])
 
-    models = train_models(X, Y)
+    validate_models(cv_set[:, :-5], cv_set[:, -1:], models)
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(models, my_file)
         print("All results are saved =)")
