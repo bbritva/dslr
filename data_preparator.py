@@ -22,16 +22,10 @@ class DataPreparator():
         }
         self.stats = pickle.load(open("stats.pickle", 'rb'))
         self.features = [
-            'Astronomy',
-            'Herbology',
-            'Defense Against the Dark Arts',
             'Divination',
             'Muggle Studies',
-            'Ancient Runes',
             'History of Magic',
             'Transfiguration',
-            'Potions',
-            'Charms',
             'Flying'
             ]
 
@@ -64,10 +58,19 @@ class DataPreparator():
             for feature in self.features:
                 X.loc[(X["Hogwarts House"] == key) & pd.isnull(X[feature]), feature] = self.stats[feature][key]
         return X
+    
+    @_guard_
+    def fill_nan_test(self, X):
+        for feature in self.features:
+            X.loc[pd.isnull(X[feature]), feature] = self.stats[feature]['common']
+        return X
         
 
     @_guard_
-    def prepare_features(self, data):
-        X = self.fill_nan(data)
+    def prepare_features(self, data, isTest = False):
+        if isTest:
+            X = self.fill_nan_test(data)
+        else:
+            X = self.fill_nan(data)
         X = self.normalize_data(X)
         return np.array(X[self.features])

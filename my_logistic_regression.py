@@ -30,7 +30,7 @@ class MyLogisticRegression():
         self.eps = np.full(self.theta.shape, math.e)
         self.x_ = np.ones(self.theta.shape)
 
-    @_guard_
+    # @_guard_
     def predict_(self, x):
         x_ = np.c_[np.ones((x.shape[0])), x]
         return 1 / (1 + math.e ** -(x_.dot(self.theta)))
