@@ -7,12 +7,12 @@ from my_logistic_regression import MyLogisticRegression as MyLR
 
 max_iter = 1e4
 alpha = 1e-2
-houses_index = {
-    "Ravenclaw": 0,
-    "Slytherin": 1,
-    "Gryffindor": 2,
-    "Hufflepuff": 3
-}
+houses_index = [
+    "Ravenclaw",
+    "Slytherin",
+    "Gryffindor",
+    "Hufflepuff"
+]
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -67,7 +67,10 @@ def main(filename):
         models = pickle.load(my_file)
     predictions = get_predictions(models, X)
 
-    print(predictions)
+    result = pd.DataFrame(predictions).rename(columns={0:"Hogwarts House"}).applymap(lambda x: houses_index[x])
+    print(result)
+    result.to_csv("res.csv", index_label='Index')
+
 
 
 if __name__ == '__main__':
