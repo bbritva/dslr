@@ -4,9 +4,8 @@ import sys
 import pickle
 
 from my_logistic_regression import MyLogisticRegression as MyLR
+from data_preparator import DataPreparator as DP   
 
-max_iter = 1e4
-alpha = 1e-2
 houses_index = [
     "Ravenclaw",
     "Slytherin",
@@ -35,14 +34,6 @@ def read_data(filename):
         except FileNotFoundError:
             return None
     return data
-
-@_guard_
-def fill_nan(X, features):
-    with open("medians.pickle", 'rb') as my_file:
-        medians = pickle.load(my_file)
-        for feature in features:
-            X[pd.isna(X[feature])] = medians[feature]['common']
-        return np.array(X[features])
     
 @_guard_
 def get_predictions(thetas, data):
@@ -60,9 +51,8 @@ def main(filename):
     if data is None:
         print("File reading error!")
         exit()
-    features = data.columns.values[6:]
-    X = fill_nan(data, features)
-    print(X.shape)
+    data_preparator = DP()
+    X = data_preparator.prepare_features(data)
     with open("model.pickle", 'rb') as my_file:
         models = pickle.load(my_file)
     predictions = get_predictions(models, X)

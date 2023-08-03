@@ -6,7 +6,7 @@ import pickle
 from my_logistic_regression import MyLogisticRegression as MyLR
 from data_preparator import DataPreparator as DP   
 
-max_iter = 5e5
+max_iter = 1e5
 alpha = 1
 houses_index = {
     "Ravenclaw": 0,
@@ -36,7 +36,7 @@ def read_data(filename):
 
 @_guard_
 def train_model(x_train, y_train):
-    theta = np.zeros((14, 1))
+    theta = np.zeros((x_train.shape[1] + 1, 1))
     my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter)
     my_lreg.fit_(x_train, y_train)
     return my_lreg
@@ -76,7 +76,9 @@ def main(filename):
     Y = data_preparator.prepare_target_values(data)
     X = data_preparator.prepare_features(data)
     train_set, cv_set = data_preparator.split_data(np.c_[X, Y])
+    print(train_set.shape, cv_set.shape)
     models = train_models(train_set[:, :-5], train_set[:, -5:-1])
+    print(models)
     validate_models(cv_set[:, :-5], cv_set[:, -1:], models)
     with open("model.pickle", 'wb') as my_file:
         pickle.dump(models, my_file)

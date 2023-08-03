@@ -21,6 +21,18 @@ class DataPreparator():
             "Hufflepuff": 3
         }
         self.stats = pickle.load(open("stats.pickle", 'rb'))
+        self.features = [
+            'Astronomy',
+            'Herbology',
+            'Defense Against the Dark Arts',
+            'Divination',
+            'Muggle Studies',
+            'Ancient Runes',
+            'History of Magic',
+            'Transfiguration',
+            'Charms',
+            'Flying'
+            ]
 
     @_guard_
     def prepare_target_values(self, data):
@@ -38,24 +50,23 @@ class DataPreparator():
         return x[:limit_train,:], x[limit_train:,:]
     
     @_guard_
-    def normalize_data(self, X, features):
-        for feature in features:
+    def normalize_data(self, X):
+        for feature in self.features:
             x_min = self.stats[feature]['min']
             x_max = self.stats[feature]['max']
             X[feature] = (X[feature] - x_min) / (x_max - x_min)
         return X
 
     @_guard_
-    def fill_nan(self, X, features):
+    def fill_nan(self, X):
         for key in self.houses_index:
-            for feature in features:
+            for feature in self.features:
                 X.loc[(X["Hogwarts House"] == key) & pd.isnull(X[feature]), feature] = self.stats[feature][key]
         return X
         
 
     @_guard_
     def prepare_features(self, data):
-        features = data.columns.values[6:]
-        X = self.fill_nan(data, features)
-        X = self.normalize_data(X, features)
-        return np.array(X[features])
+        X = self.fill_nan(data)
+        X = self.normalize_data(X)
+        return np.array(X[self.features])
