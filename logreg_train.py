@@ -7,13 +7,7 @@ from my_logistic_regression import MyLogisticRegression as MyLR
 from data_preparator import DataPreparator as DP   
 
 max_iter = 1e5
-alpha = 1
-houses_index = {
-    "Ravenclaw": 0,
-    "Slytherin": 1,
-    "Gryffindor": 2,
-    "Hufflepuff": 3
-}
+alpha = 100
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
