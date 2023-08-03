@@ -102,7 +102,7 @@ def normalize_data(X, features, stats):
 def fill_nan(X, features, stats):
     for key in houses_index:
         for feature in features:
-            X[(X["Hogwarts House"] == key) & pd.isna(X[feature])][feature] = stats[feature][key]
+            X.loc[(X["Hogwarts House"] == key) & pd.isnull(X[feature]), feature] = stats[feature][key]
     return X
     
 
@@ -111,7 +111,7 @@ def prepare_features(data, stats):
     features = data.columns.values[6:]
     X = fill_nan(data, features, stats)
     X = normalize_data(X, features, stats)
-    return np.array(X)
+    return np.array(X[features])
 
 
 @_guard_
@@ -122,6 +122,7 @@ def main(filename):
         exit()
     Y = prepare_target_values(data)
     X = prepare_features(data, stats)
+    print(X.shape, Y.shape)
     train_set, cv_set= split_data(np.c_[X, Y])
     models = train_models(train_set[:, :-5], train_set[:, -5:-1])
 
