@@ -22,13 +22,18 @@ class DataPreparator():
         }
         self.stats = pickle.load(open("stats.pickle", 'rb'))
         self.features = [
+            'Astronomy',
+            'Herbology',
+            'Defense Against the Dark Arts',
             'Divination',
             'Muggle Studies',
+            'Ancient Runes',
             'History of Magic',
             'Transfiguration',
+            'Potions',
+            'Charms',
             'Flying'
             ]
-
     @_guard_
     def prepare_target_values(self, data):
         houses = np.array(data["Hogwarts House"]).reshape((-1, 1))
