@@ -42,7 +42,6 @@ def get_predictions(thetas, data):
         mdl = MyLR(theta)
         y_hat.append(mdl.predict_(data))
     y_hat = np.c_[y_hat[0], y_hat[1], y_hat[2], y_hat[3]]
-    print((y_hat[:,:30]))
     y_hat = np.argmax(y_hat, axis=1).reshape((-1, 1))
     return y_hat
 

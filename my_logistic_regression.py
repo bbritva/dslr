@@ -76,26 +76,6 @@ class MyLogisticRegression():
         return self.theta
     
     @_guard_
-    def fit_(self, x, y, isStochastic = False):
-        self.eps = np.full(y.shape, math.e)
-        self.x_ = np.c_[np.ones(x.shape[0]), x]
-        self.ones = np.ones(y.shape)
-        start = time.time()
-        cycles = int(self.max_iter / 100)
-        losses = [self.loss_(y, self.predict_(x))]
-        print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
-        for j in range(100):
-            for i in range(cycles):
-                self.theta -= self.alpha * self.gradient(self.x_, y)
-                y_hat = 1 / (1 + math.e ** -(self.x_.dot(self.theta)))
-                losses.append(self.loss_(y, y_hat))
-            now = time.time() - start
-            print("\r%3d%%, time = %5.2fs" % ((j + 1), now), end="")
-        print("")
-        self.show_loss(losses)
-        return self.theta
-    
-    @_guard_
     def loss_(self, y, y_hat, eps=1e-15):
         m1 = (y.T.dot(np.log(y_hat + eps)))
         m2 = (self.ones - y).T.dot(np.log(self.ones - y_hat + eps))

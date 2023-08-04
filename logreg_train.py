@@ -8,6 +8,7 @@ from data_preparator import DataPreparator as DP
 
 max_iter = 5e3
 alpha = 0.2
+is_bonus = False
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
@@ -29,20 +30,27 @@ def read_data(filename):
 
 
 @_guard_
-def train_model(x_train, y_train):
+def train_model(x_train, y_train, n_cycles, batch_size):
     theta = np.zeros((x_train.shape[1] + 1, 1))
     my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter)
-    # my_lreg.fit_(x_train, y_train)
-    # my_lreg.fit_stochastic(x_train, y_train)
-    my_lreg.fit_stochastic(x_train, y_train, n_cycles=1, batch_size=1)
+
+    my_lreg.fit_stochastic(x_train, y_train, n_cycles, batch_size)
     return my_lreg
 
 
 @_guard_
 def train_models(X, Y):
     models = []
+    batch_size = None
+    n_cycles = None
+    if is_bonus:
+        try:
+            batch_size = int(input("Please, enter the batch size: "))
+            n_cycles = int(input("Please, enter the number of cycles: "))
+        except ValueError:
+            print("Wrong input! Working with default values...")
     for i in range(4):
-        models.append(train_model(X, Y[:, i].reshape((-1, 1))).theta)
+        models.append(train_model(X, Y[:, i].reshape((-1, 1)), n_cycles, batch_size).theta)
     print("Models trained")
     return models
 
@@ -80,8 +88,10 @@ def main(filename):
 
 
 if __name__ == '__main__':
-    if not len(sys.argv) == 2:
-        print("Please, provide the filename in the program arguments")
+    if len(sys.argv) < 2:
+        print("Please, provide the filename in the program arguments: python logreg_train.py <filename>")
+        print("For bonus part: python logreg_train.py <filename> -b")
         exit()
     filename = sys.argv[1]
+    is_bonus = len(sys.argv) == 3 and sys.argv[2] == "-b"
     main(filename)
