@@ -56,7 +56,7 @@ def main():
         print("File reading error!")
         exit()
     features = data_train.columns.values[6:]
-    scatter_plot(data_train, features=features[:3])
+    scatter_plot(data_train, features=features)
 
 
 if __name__ == '__main__':

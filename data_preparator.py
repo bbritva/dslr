@@ -22,18 +22,25 @@ class DataPreparator():
         }
         self.stats = pickle.load(open("stats.pickle", 'rb'))
         self.features = [
+            # 'Arithmancy',
             'Astronomy',
             'Herbology',
-            'Defense Against the Dark Arts',
+            # 'Defense Against the Dark Arts',
             'Divination',
             'Muggle Studies',
             'Ancient Runes',
             'History of Magic',
             'Transfiguration',
             'Potions',
+            # 'Care of Magical Creatures',
             'Charms',
             'Flying'
             ]
+        for feature in self.features:
+            if not feature in self.stats.head():
+                print('Error reading file :(')
+                exit()
+
     @_guard_
     def prepare_target_values(self, data):
         houses = np.array(data["Hogwarts House"]).reshape((-1, 1))
