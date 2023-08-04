@@ -50,7 +50,11 @@ class MyLogisticRegression():
 
    
     @_guard_
-    def fit_stochastic(self, x, y, n_cycles=1, batch_size=1):
+    def fit_stochastic(self, x, y, n_cycles=None, batch_size=None):
+        if n_cycles is None:
+            n_cycles = self.max_iter
+        if batch_size is None:
+            batch_size = x.shape[0]
         self.eps = np.full(1, math.e).reshape((-1, 1))
         self.ones = np.ones(y.shape)
         start = time.time()
@@ -61,13 +65,12 @@ class MyLogisticRegression():
             x_curr = x[index]
             y_curr = y[index]
             self.x_ = np.c_[np.ones(x.shape[0]), x_curr]
-            print(y.shape, y_curr.shape)
             for i in range(0, x.shape[0], batch_size):
                 self.theta -= self.alpha * self.gradient(self.x_[i:i + batch_size], y_curr[i:i + batch_size])
                 y_hat = 1 / (1 + math.e ** -(self.x_.dot(self.theta)))
                 losses.append(self.loss_(y_curr, y_hat))
             now = time.time() - start
-            print("\r%3d%%, time = %5.2fs" % ((j + 1), now), end="")
+            print("\r%3d%%, time = %5.2fs" % ((j + 1) * 100 / n_cycles, now), end="")
         print("")
         self.show_loss(losses)
         return self.theta

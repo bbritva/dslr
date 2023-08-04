@@ -32,8 +32,9 @@ def read_data(filename):
 def train_model(x_train, y_train):
     theta = np.zeros((x_train.shape[1] + 1, 1))
     my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter)
-    my_lreg.fit_(x_train, y_train)
+    # my_lreg.fit_(x_train, y_train)
     # my_lreg.fit_stochastic(x_train, y_train)
+    my_lreg.fit_stochastic(x_train, y_train, n_cycles=1, batch_size=1)
     return my_lreg
 
 
