@@ -26,7 +26,7 @@ class MyLogisticRegression():
         self.max_iter = int(max_iter)
         self.theta = np.array(theta)
         self.theta_ = np.zeros(theta.shape)
-        self.eps = np.full(self.theta.shape, math.e)
+        self.euler = np.full(self.theta.shape, math.e)
         self.x_ = np.ones(self.theta.shape)
 
     @_guard_
@@ -36,7 +36,7 @@ class MyLogisticRegression():
 
     @_guard_
     def gradient(self, x, y):
-        y_hat = 1 / (1 + self.eps ** -(x.dot(self.theta)))
+        y_hat = 1 / (1 + self.euler ** -(x.dot(self.theta)))
         return x.T.dot(y_hat - y) / y.shape[0]
 
     @_guard_
@@ -55,7 +55,7 @@ class MyLogisticRegression():
             n_cycles = self.max_iter
         if batch_size is None:
             batch_size = x.shape[0]
-        self.eps = np.full(1, math.e).reshape((-1, 1))
+        self.euler = np.full(1, math.e).reshape((-1, 1))
         self.ones = np.ones(y.shape)
         start = time.time()
         losses = [self.loss_(y, self.predict_(x))]
