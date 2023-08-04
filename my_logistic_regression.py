@@ -36,13 +36,14 @@ class MyLogisticRegression():
 
     @_guard_
     def gradient(self, x, y):
-        y_hat = 1 / (1 + self.eps ** -(self.x_.dot(self.theta)))
-        return self.x_.T.dot(y_hat - y) / y.shape[0]
 
-    @_guard_
-    def stochastic_gradient(self, x, y):
-        y_hat = 1 / (1 + self.eps ** -(self.x_.dot(self.theta)))
-        return self.x_.T.dot(y_hat - y) / y.shape[0]
+        x = x.reshape((-1, 1))
+        y = y.reshape((-1, 1))
+        # print(x.shape, self.eps.shape, self.theta.shape)
+        y_hat = 1 / (1 + self.eps ** -(x.T.dot(self.theta)))
+        # print(x.shape, y.shape, y_hat.shape)
+
+        return x.dot(y_hat - y) / y.shape[0]
 
     @_guard_
     def show_loss(self, losses):
@@ -53,21 +54,28 @@ class MyLogisticRegression():
         plt.grid()
         plt.show()
 
+   
     @_guard_
-    def grad_desc_fit(self, cycles, x, y):
-        losses = []
-        for i in range(cycles):
-            self.theta -= self.alpha * self.gradient(x, y)
-            losses.append(self.loss_(y, self.predict_(x)))
-        return losses
-    
-    @_guard_
-    def stochastic_grad_desc_fit(self, cycles, x, y):
-        losses = []
-        for i in range(cycles):
-            self.theta -= self.alpha * self.stochastic_gradient(x, y)
-            losses.append(self.loss_(y, self.predict_(x)))
-        return losses
+    def fit_stochastic(self, x, y):
+        self.eps = np.full(1, math.e).reshape((-1, 1))
+        self.ones = np.ones(y.shape)
+        start = time.time()
+        losses = [self.loss_(y, self.predict_(x))]
+        print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
+        for j in range(1):
+            index = np.random.permutation(x.shape[0])
+            x_curr = x[index]
+            y_curr = y[index]
+            self.x_ = np.c_[np.ones(x.shape[0]), x_curr]
+            for i in range(x.shape[0]):
+                self.theta -= self.alpha * self.gradient(self.x_[i], y_curr[i])
+                y_hat = 1 / (1 + math.e ** -(self.x_.dot(self.theta)))
+                losses.append(self.loss_(y_curr, y_hat))
+            now = time.time() - start
+            print("\r%3d%%, time = %5.2fs" % ((j + 1), now), end="")
+        print("")
+        self.show_loss(losses)
+        return self.theta
     
     @_guard_
     def fit_(self, x, y, isStochastic = False):
@@ -79,10 +87,10 @@ class MyLogisticRegression():
         losses = [self.loss_(y, self.predict_(x))]
         print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
         for j in range(100):
-            if isStochastic :
-                losses += self.grad_desc_fit(cycles, x, y)
-            else:
-                losses += self.stochastic_grad_desc_fit(cycles, x, y)
+            for i in range(cycles):
+                self.theta -= self.alpha * self.gradient(self.x_, y)
+                y_hat = 1 / (1 + math.e ** -(self.x_.dot(self.theta)))
+                losses.append(self.loss_(y, y_hat))
             now = time.time() - start
             print("\r%3d%%, time = %5.2fs" % ((j + 1), now), end="")
         print("")

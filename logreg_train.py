@@ -32,7 +32,8 @@ def read_data(filename):
 def train_model(x_train, y_train):
     theta = np.zeros((x_train.shape[1] + 1, 1))
     my_lreg = MyLR(theta, alpha=alpha, max_iter=max_iter)
-    my_lreg.fit_(x_train, y_train)
+    # my_lreg.fit_(x_train, y_train)
+    my_lreg.fit_stochastic(x_train, y_train)
     return my_lreg
 
 
@@ -70,7 +71,6 @@ def main(filename):
     Y = data_preparator.prepare_target_values(data)
     X = data_preparator.prepare_features(data)
     train_set, cv_set = data_preparator.split_data(np.c_[X, Y])
-    print(train_set.shape, cv_set.shape)
     models = train_models(train_set[:, :-5], train_set[:, -5:-1])
     validate_models(cv_set[:, :-5], cv_set[:, -1:], models)
     with open("model.pickle", 'wb') as my_file:
