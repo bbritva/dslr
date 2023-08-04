@@ -36,14 +36,8 @@ class MyLogisticRegression():
 
     @_guard_
     def gradient(self, x, y):
-
-        x = x.reshape((-1, 1))
-        y = y.reshape((-1, 1))
-        # print(x.shape, self.eps.shape, self.theta.shape)
-        y_hat = 1 / (1 + self.eps ** -(x.T.dot(self.theta)))
-        # print(x.shape, y.shape, y_hat.shape)
-
-        return x.dot(y_hat - y) / y.shape[0]
+        y_hat = 1 / (1 + self.eps ** -(x.dot(self.theta)))
+        return x.T.dot(y_hat - y) / y.shape[0]
 
     @_guard_
     def show_loss(self, losses):
@@ -56,19 +50,20 @@ class MyLogisticRegression():
 
    
     @_guard_
-    def fit_stochastic(self, x, y):
+    def fit_stochastic(self, x, y, n_cycles=1, batch_size=1):
         self.eps = np.full(1, math.e).reshape((-1, 1))
         self.ones = np.ones(y.shape)
         start = time.time()
         losses = [self.loss_(y, self.predict_(x))]
         print("\r%3d%%, time =%5.2fs" % (0, 0), end="")
-        for j in range(1):
+        for j in range(n_cycles):
             index = np.random.permutation(x.shape[0])
             x_curr = x[index]
             y_curr = y[index]
             self.x_ = np.c_[np.ones(x.shape[0]), x_curr]
-            for i in range(x.shape[0]):
-                self.theta -= self.alpha * self.gradient(self.x_[i], y_curr[i])
+            print(y.shape, y_curr.shape)
+            for i in range(0, x.shape[0], batch_size):
+                self.theta -= self.alpha * self.gradient(self.x_[i:i + batch_size], y_curr[i:i + batch_size])
                 y_hat = 1 / (1 + math.e ** -(self.x_.dot(self.theta)))
                 losses.append(self.loss_(y_curr, y_hat))
             now = time.time() - start
