@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import sys
 import pickle
+from sklearn.metrics import accuracy_score
+
 
 from my_logistic_regression import MyLogisticRegression as MyLR
 from data_preparator import DataPreparator as DP   
@@ -46,8 +48,8 @@ def get_predictions(thetas, data):
     return y_hat
 
 @_guard_
-def main(filename):
-    data = read_data(filename)
+def main(filename_test, filename_target):
+    data = read_data(filename_test)
     if data is None:
         print("File reading error!")
         exit()
@@ -58,17 +60,29 @@ def main(filename):
     predictions = get_predictions(models, X)
 
     result = pd.DataFrame(predictions).rename(columns={0:"Hogwarts House"}).applymap(lambda x: houses_index[x])
-    target = pd.read_csv('target.csv')
-
-    print(result[result["Hogwarts House"] != target["Hogwarts House"]])
-    print(len(result[result["Hogwarts House"] != target["Hogwarts House"]]))
     result.to_csv("houses.csv", index_label='Index')
+    print("Predictions saved to 'houses.csv'\n")
+    if filename_target is not None:
+        try:
+            target = pd.read_csv(filename_target)
+            print("Wrong predictions: ")
+            print(result[result["Hogwarts House"] != target["Hogwarts House"]])
+            print("\nAmount of wrong predictions:", len(result[result["Hogwarts House"] != target["Hogwarts House"]]))
+            print("\nScikit-learn accuracy score:", accuracy_score(target["Hogwarts House"], result["Hogwarts House"]))
+        except FileNotFoundError:
+            print("Target file reading error!")
+
 
 
 
 if __name__ == '__main__':
-    if not len(sys.argv) == 2:
-        print("Please, provide the filename in the program arguments")
+    filename_target = None
+    filename_test = None
+    if len(sys.argv) > 1:
+        filename_test = sys.argv[1]
+    if len(sys.argv) == 3:
+        filename_target = sys.argv[2]
+    if filename_test is None:
+        print("Please, enter the name of the file to predict\n Usage: python logreg_predict.py <filename>\n or: python logreg_predict.py <filename> <target_filename>")
         exit()
-    filename = sys.argv[1]
-    main(filename)
+    main(filename_test, filename_target)
