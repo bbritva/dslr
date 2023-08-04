@@ -65,7 +65,8 @@ def percentile(x, p):
 @_to_numpy_
 @_drop_nan_
 def std(x):
-    return (sum([(i - mean(x)) ** 2 for i in x]) / (len(x) - 1)) ** 0.5
+    res = (sum([(i - mean(x)) ** 2 for i in x]) / len(x)) ** 0.5
+    return res
 
 
 def calc_values(data, feature):
