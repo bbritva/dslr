@@ -94,12 +94,6 @@ def main(filename):
     for feature in features:
         decription[feature] = calc_values(data, feature)
     print(decription)
-    for house in houses:
-        print("\n" + house + " values:")
-        for feature in features:
-            decription[feature] = calc_values(data[data['Hogwarts House'] == house], feature)
-        print(decription)
-    print("\nMedian values for Hogwarts Houses")
     houses_median = pd.DataFrame(columns=features, index=np.r_[houses,["common", "max", "min"]])
     for feature in features:
         for house in houses:
@@ -110,6 +104,12 @@ def main(filename):
     with open("stats.pickle", 'wb') as my_file:
         pickle.dump(houses_median, my_file)
         print("All results are saved =)")
+    for house in houses:
+        print("\n" + house + " values:")
+        for feature in features:
+            decription[feature] = calc_values(data[data['Hogwarts House'] == house], feature)
+        print(decription)
+
 
 
 
