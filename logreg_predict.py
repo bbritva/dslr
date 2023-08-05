@@ -83,6 +83,6 @@ if __name__ == '__main__':
     if len(sys.argv) == 3:
         filename_target = sys.argv[2]
     if filename_test is None:
-        print("Please, enter the name of the file to predict\n Usage: python logreg_predict.py <filename>\n or: python logreg_predict.py <filename> <target_filename>")
+        print("Please, enter the name of the file to predict\nUsage: python logreg_predict.py <filename>\nor: python logreg_predict.py <filename> <target_filename>")
         exit()
     main(filename_test, filename_target)

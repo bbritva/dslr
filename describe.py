@@ -3,6 +3,8 @@ import numpy as np
 import sys
 import pickle
 
+is_bonus = False
+
 def _guard_(func):
     def wrapper(*args, **kwargs):
         try:
@@ -104,6 +106,8 @@ def main(filename):
     with open("stats.pickle", 'wb') as my_file:
         pickle.dump(houses_median, my_file)
         print("All results are saved =)")
+    if not is_bonus:
+        return
     for house in houses:
         print("\n" + house + " values:")
         for feature in features:
@@ -115,8 +119,10 @@ def main(filename):
 
 
 if __name__ == '__main__':
-    if not len(sys.argv) == 2:
-        print("Please, provide the filename in the program arguments")
+    if len(sys.argv) < 2:
+        print("Please, provide the filename in the program arguments\nUsage: python describe.py <filename>")
+        print("Bonus: python describe.py <filename> -b")
         exit()
     filename = sys.argv[1]
+    is_bonus = len(sys.argv) == 3 and sys.argv[2] == "-b"
     main(filename)
