@@ -17,11 +17,11 @@ houses_index = [
 
 def _guard_(func):
     def wrapper(*args, **kwargs):
-        # try:
+        try:
             return (func(*args, **kwargs))
-        # except Exception as e:
-        #     print(e)
-        #     return None
+        except Exception as e:
+            print(e)
+            return None
     return wrapper
 
 

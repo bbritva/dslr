@@ -88,12 +88,17 @@ def main(filename):
         print("File reading error!")
         exit()
     features = data.columns.values[6:]
+    houses = data["Hogwarts House"].unique()
     rows = ['Count', 'Mean', 'Std', 'Min', '25%', '50%', '75%', 'Max']
     decription = pd.DataFrame(columns=features, index=rows)
     for feature in features:
         decription[feature] = calc_values(data, feature)
     print(decription)
-    houses = data["Hogwarts House"].unique()
+    for house in houses:
+        print("\n" + house + " values:")
+        for feature in features:
+            decription[feature] = calc_values(data[data['Hogwarts House'] == house], feature)
+        print(decription)
     print("\nMedian values for Hogwarts Houses")
     houses_median = pd.DataFrame(columns=features, index=np.r_[houses,["common", "max", "min"]])
     for feature in features:
@@ -102,7 +107,6 @@ def main(filename):
     houses_median.loc["common"] = np.array(decription.loc[['50%']])
     houses_median.loc["max"] = np.array(decription.loc[['Max']])
     houses_median.loc["min"] = np.array(decription.loc[['Min']])
-    print(houses_median)
     with open("stats.pickle", 'wb') as my_file:
         pickle.dump(houses_median, my_file)
         print("All results are saved =)")
