@@ -61,11 +61,11 @@ def main(filename_test, filename_target):
 
     result = pd.DataFrame(predictions).rename(columns={0:"Hogwarts House"}).applymap(lambda x: houses_index[x])
     result.to_csv("houses.csv", index_label='Index')
-    print("Predictions saved to 'houses.csv'\n")
+    print("Predictions saved to 'houses.csv'")
     if filename_target is not None:
         try:
             target = pd.read_csv(filename_target)
-            print("Wrong predictions: ")
+            print("\nWrong predictions: ")
             print(result[result["Hogwarts House"] != target["Hogwarts House"]])
             print("\nAmount of wrong predictions:", len(result[result["Hogwarts House"] != target["Hogwarts House"]]))
             print("\nScikit-learn accuracy score:", accuracy_score(target["Hogwarts House"], result["Hogwarts House"]))

@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *pickle
 target.csv
+houses.csv
 
 # C extensions
 *.so
